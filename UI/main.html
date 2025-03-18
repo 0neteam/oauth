@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <!-- Font Awesome -->
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: flex-end; /* Align to the right side */
+            align-items: center; /* Vertically center */
+            height: 100vh; /* Full viewport height */
+        }
+
+        .form-user {
+            width: 350px; /* Set fixed width for the form */
+            padding: 30px;
+            border-radius: 15px;  /* Rounded corners */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);  /* Stronger shadow */
+            border: 1px solid #ddd;  /* Border */
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 2px solid #c8ced6; /* Border around image */
+        }
+
+        .username {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .user-id {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+
+        .btn-custom {
+            width: 100%;
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn-logout {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+        }
+
+        .btn-cafe, .btn-blog {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <div class="form-user">
+        <!-- 프로필 사진 -->
+        <img id="profile-img" src="https://static.nid.naver.com/images/web/user/default.png?type=s160" alt="Profile Picture" class="profile-img" onclick="document.getElementById('file-input').click();">
+
+        <!-- 파일 업로드 input -->
+        <input type="file" id="file-input" class="file-input" accept="image/*" onchange="updateProfileImage(event)" style="display: none;">
+
+        <!-- 로그인 사용자 이름 -->
+        <div class="username">홍길동</div>
+
+        <!-- 사용자 아이디 -->
+        <div class="user-id" > @honggildong </div> <!-- 사용자 아이디 -->
+
+        <!-- 로그아웃 버튼 -->
+        <button class="btn btn-logout btn-custom" onclick="">로그아웃</button>
+
+        <!-- 카페 이동 버튼 -->
+        <button class="btn btn-cafe btn-custom">카페 이동</button>
+
+        <!-- 블로그 이동 버튼 -->
+        <button class="btn btn-blog btn-custom">블로그 이동</button>
+    </div>
+</div>
+
+</body>
+</html>
