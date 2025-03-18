@@ -76,7 +76,7 @@ public class AuthorizationConfig {
         System.out.println("test filter");
 
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
-        //http.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher());
+        http.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher());
 
         //http.with(authorizationServerConfigurer, Customizer.withDefaults());
        http.with(authorizationServerConfigurer, (authorizationServer) -> authorizationServer.oidc(Customizer.withDefaults()));
