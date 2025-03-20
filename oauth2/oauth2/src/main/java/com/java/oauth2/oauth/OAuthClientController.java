@@ -58,11 +58,8 @@ public class OAuthClientController {
 
       model.addAttribute("issuer", social_userinfo.getIssuer());
       model.addAttribute("name", social_userinfo.getName());
-<<<<<<< HEAD
       model.addAttribute("email", social_userinfo.getEmail());
-=======
-      model.addAttribute("id", social_userinfo.getId());
->>>>>>> 5899767dd2fe9dbdb316eccd908844e1d53d2a56
+
       log.info("model : {}", model);
       return "main";
     }
@@ -122,7 +119,6 @@ public class OAuthClientController {
 	      for (Cookie cookie : cookies) {
 	        if ("access_token".equals(cookie.getName())) {
 
-<<<<<<< HEAD
 	          List<JWK> jwks = jwkSet.getKeys();
 
 	          String token = cookie.getValue();
@@ -161,8 +157,6 @@ public class OAuthClientController {
 	  return oAuthClient;
   }
 
-=======
->>>>>>> 5899767dd2fe9dbdb316eccd908844e1d53d2a56
   @ResponseBody
   @GetMapping("/callback")
   public String callback() {
@@ -190,13 +184,8 @@ public class OAuthClientController {
       System.out.println("oauthReqDTO = " + oauthReqDTO);
 
       OAuthClient oAuthClient = OAuthClient.builder()
-<<<<<<< HEAD
               .name(oauthReqDTO.getName())
               .email(oauthReqDTO.getEmail())
-=======
-              .name("홍길동")
-              .email(oauthReqDTO.getId())
->>>>>>> 5899767dd2fe9dbdb316eccd908844e1d53d2a56
               .issuer("LOCAL")
               .pwd(oauthReqDTO.getPwd())
               //.profilePictureUrl("http://localhost:9000")
@@ -224,12 +213,8 @@ public class OAuthClientController {
 
       System.out.println("access_token = " + access_token);
 
-<<<<<<< HEAD
       Cookie cookie = new Cookie("access_token", access_token);      
-=======
-      Cookie cookie = new Cookie("access_token", access_token);
-      cookie.setPath("/");
->>>>>>> 5899767dd2fe9dbdb316eccd908844e1d53d2a56
+
       cookie.setHttpOnly(true); // JavaScript에서 접근 불가
       //cookie.setSecure(true); // HTTPS에서만 전송
       cookie.setPath("/"); //
@@ -252,11 +237,7 @@ public class OAuthClientController {
     System.out.println("getToken start ");
 
     return RestClient.create().post()
-<<<<<<< HEAD
             .uri("http://d.0neteam.co.kr:9000/oauth2/token")
-=======
-            .uri("http://leejihyun.co.kr:9000/oauth2/token")
->>>>>>> 5899767dd2fe9dbdb316eccd908844e1d53d2a56
             .header("Content-Type", "application/x-www-form-urlencoded")
             .body(formData)
             .retrieve()

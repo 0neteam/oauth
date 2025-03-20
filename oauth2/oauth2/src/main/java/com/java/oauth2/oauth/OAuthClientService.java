@@ -36,10 +36,7 @@ public class OAuthClientService {
 
     return RegisteredClient
         .withId(String.valueOf(oAuthClient.getNo()))
-<<<<<<< HEAD
         .clientName(oAuthClient.getName())
-=======
->>>>>>> 5899767dd2fe9dbdb316eccd908844e1d53d2a56
         .clientId(oAuthClient.getEmail())
         .clientSecret(oAuthClient.getPwd())
 //            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)

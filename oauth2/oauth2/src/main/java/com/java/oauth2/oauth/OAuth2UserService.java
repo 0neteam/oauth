@@ -100,10 +100,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             .issuer(oAuthClientName)  // 인증 제공자 이름
             .name(name)  // 사용자 이름
             .id(oauthClient.getNo())  // DB에서 저장된 사용자 ID
-<<<<<<< HEAD
             .email(email)
-=======
->>>>>>> 5899767dd2fe9dbdb316eccd908844e1d53d2a56
             .build();
   }
 
