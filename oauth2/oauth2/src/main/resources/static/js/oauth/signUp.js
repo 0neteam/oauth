@@ -6,6 +6,7 @@ document.getElementById('signUpForm').addEventListener('submit', function(event)
     const user = {
         email: document.getElementById('email').value,
 		name: document.getElementById('name').value,
+
         pwd: document.getElementById('pwd').value
     };
 

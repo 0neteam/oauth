@@ -39,8 +39,13 @@ public class OAuthClient {
 
   private int fileNo;
 
+<<<<<<< HEAD
   @Column(name = "useYN", nullable = false, columnDefinition = "char default 'Y'")
   private char useYN;
+=======
+  @Column(name = "useYN", nullable = false, columnDefinition = "boolean default true")
+  private boolean useYN;
+>>>>>>> 5899767dd2fe9dbdb316eccd908844e1d53d2a56
 
   @Column(nullable = false)
   @CreationTimestamp

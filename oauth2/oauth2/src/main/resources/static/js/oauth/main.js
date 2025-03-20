@@ -18,10 +18,12 @@ function updateProfileImage(event) {
 function logout() {
     axios.get("/oauth2/logout", {}, { withCredentials: true })
         .then(res => {
+
 			console.log(res);
             if (res.data) {
                 // 로그아웃 성공 후 리디렉션
                 document.location.href = "/oauth2/logout";
+
             }
         })
         .catch(err => {

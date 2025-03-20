@@ -5,6 +5,7 @@ document.getElementById('signInForm').addEventListener('submit', function(event)
     // Get form data
     const user = {
         email: document.getElementById('email').value,
+
         pwd: document.getElementById('pwd').value
     };
 

@@ -25,10 +25,12 @@
             <input type="file" id="file-input" class="file-input" accept="image/*" onchange="updateProfileImage(event)" style="display: none;">
 
             <!-- 로그인 사용자 이름 -->
+
             <div class="username" th:text="${name}"></div>
 
             <!-- 사용자 이메일 -->
             <div class="user-id" th:text="${email}"></div> <!-- 사용자 이메일 -->
+
 
             <!-- 로그아웃 버튼 -->
             <button class="btn btn-lg btn-danger btn-block btn-center" style="padding: 8px 16px;" onclick="logout()">로그아웃</button>
