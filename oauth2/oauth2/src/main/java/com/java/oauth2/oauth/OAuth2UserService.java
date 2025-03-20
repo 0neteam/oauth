@@ -79,7 +79,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     if(oauthClient == null) {
       // 신규 회원 정보 생성
       oauthClient = OAuthClient.builder()
-              .username(name)
+              .name(name)
               .email(email)
               .issuer(oAuthClientName)  // 인증 제공자 (네이버, 카카오 등)
               .oauthId(oauthId)
@@ -90,7 +90,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
       oauthClient = oauthClientRepository.save(oauthClient);
 
       // 저장 후 ID가 정상적으로 생성되면 추가 작업 가능
-      if(oauthClient.getId() > 0) {
+      if(oauthClient.getNo() > 0) {
         // 정상 로직 추가 (예: 회원가입 후 추가 작업)
       }
     }
@@ -99,7 +99,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     return CustomOAuth2User.builder()
             .issuer(oAuthClientName)  // 인증 제공자 이름
             .name(name)  // 사용자 이름
-            .id(oauthClient.getId())  // DB에서 저장된 사용자 ID
+            .id(oauthClient.getNo())  // DB에서 저장된 사용자 ID
             .build();
   }
 

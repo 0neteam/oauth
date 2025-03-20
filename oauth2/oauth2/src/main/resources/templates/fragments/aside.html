@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<aside th:fragment="aside" class="offcanvas offcanvas-start" id="side">
+	<div class="offcanvas-header">
+		<h1 class="offcanvas-title">Cafe & Blog</h1>
+		<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+	</div>
+	<div class="list-group list-group-flush">
+	
+		<!-- START - 인사 관리 메뉴 항목 -->
+		<!-- <a class="list-group-item list-group-item-action" href="#!" data-bs-toggle="collapse" data-bs-target="#hr-submenu" aria-expanded="false" aria-controls="hr-submenu">인사 관리</a>
+		<div class="collapse" id="hr-submenu">			
+			<a class="list-group-item list-group-item-action ps-4" href="/user/list">사원정보</a>
+		</div> -->
+		<a class="list-group-item list-group-item-action" href="/user/list" aria-expanded="false">인사 관리</a>
+		<!-- END - 인사 관리 메뉴 항목 -->
+
+		<!-- START - 거래처 관리 메뉴 항목 -->
+		<!-- <a class="list-group-item list-group-item-action" href="#!" data-bs-toggle="collapse" data-bs-target="#prod-submenu" aria-expanded="false" aria-controls="prod-submenu">거래처 관리</a>
+		<div class="collapse" id="prod-submenu">
+		<a class="list-group-item list-group-item-action ps-4" href="/biz/list">거래처정보</a>
+		</div> -->
+		<a class="list-group-item list-group-item-action" href="/biz/list" aria-expanded="false">거래처 관리</a>
+		<!-- END - 거래처 관리 메뉴 항목 -->
+
+			
+		<!-- START - 발주관리 메뉴 및 하위 항목 -->
+		<a class="list-group-item list-group-item-action" href="#!" data-bs-toggle="collapse" data-bs-target="#order-submenu" aria-expanded="false" aria-controls="hr-submenu">발주 관리</a>
+		<div class="collapse" id="order-submenu">			
+			<a class="list-group-item list-group-item-action ps-4" href="/order/orderRequest">발주 요청</a>
+			<a class="list-group-item list-group-item-action ps-4" href="/order/orderInquiry">발주 조회</a>
+		</div>
+		<!-- END - 발주관리 메뉴 및 하위 항목 -->
+ 		
+        <a class="list-group-item list-group-item-action" href="#!" data-bs-toggle="collapse" data-bs-target="#stock-submenu" aria-expanded="false" aria-controls="stock-submenu">입출고 관리</a>
+        <div class="collapse" id="stock-submenu">            
+            <a class="list-group-item list-group-item-action ps-4" href="/stock">재고 관리</a>
+            <a class="list-group-item list-group-item-action ps-4" href="/income">입고 관리</a>
+        </div>
+       
+	</div>
+</aside>
+</html>

@@ -27,7 +27,7 @@ public class OAuthClientService {
 
   public RegisteredClient findByClientId(String Id) {
     System.out.println("findByClientId = " + Id);
-    OAuthClient oAuthClient = oAuthClientRepository.findByemail(Id)
+    OAuthClient oAuthClient = oAuthClientRepository.findByEmail(Id)
             .orElseThrow(() -> new IllegalArgumentException(msg + Id));
     return loadClientByResult(oAuthClient);
   }
@@ -35,7 +35,7 @@ public class OAuthClientService {
   private RegisteredClient loadClientByResult(OAuthClient oAuthClient) {
 
     return RegisteredClient
-        .withId(String.valueOf(oAuthClient.getId()))
+        .withId(String.valueOf(oAuthClient.getNo()))
         .clientId(oAuthClient.getEmail())
         .clientSecret(oAuthClient.getPwd())
 //            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "oauthclient")
+@Table(name = "user")
 @Data
 @Builder
 @AllArgsConstructor
@@ -21,17 +21,25 @@ public class OAuthClient {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private int no;
 
   @Column(length = 50)
   private String email;
+
   @Column(length = 50, nullable = false)
-  private String username;
+  private String name;
+
+  @Column(nullable = false, columnDefinition = "VARCHAR(50) DEFAULT 'LOCAL'")
+  private String issuer;
+
+  @Column(length = 100, nullable = false)
+  private String oauthId;
 
   private String pwd;
-  private String profilePictureUrl;
 
-  @Column(name = "use_yn", nullable = false, columnDefinition = "boolean default true")
+  private int fileNo;
+
+  @Column(name = "useYN", nullable = false, columnDefinition = "boolean default true")
   private boolean useYN;
 
   @Column(nullable = false)
@@ -39,9 +47,7 @@ public class OAuthClient {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime regDate;
 
-  @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'LOCAL'")
-  private String issuer;
-  @Column(nullable = false)
-  private String oauthId;
+
+
 
 }

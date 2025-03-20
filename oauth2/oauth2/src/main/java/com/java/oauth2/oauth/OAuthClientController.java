@@ -1,5 +1,6 @@
 package com.java.oauth2.oauth;
 
+import com.java.oauth2.common.UserUtils;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import jakarta.servlet.http.Cookie;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -42,19 +44,28 @@ public class OAuthClientController {
 
   @GetMapping("/")
   public String home(@AuthenticationPrincipal CustomOAuth2User oAuth2User, Model model, HttpServletRequest request, HttpServletResponse response, @RequestHeader(value = "Authorization", defaultValue = "") String authorizationHeader) {
-    // 쿠키에서 access_token 값을 찾기
-
-    log.info("CustomOAuth2User : {}", oAuth2User);
-    if(oAuth2User != null) {
-      model.addAttribute("issuer", oAuth2User.getIssuer());
-      System.out.println("/ oAuth2User = " + oAuth2User);
-      return "main";
-    }
-
-    Cookie[] cookies = request.getCookies();
 
     System.out.println("home start test");
 
+    //소셜 로그인 값 확인
+    HttpSession session = request.getSession();
+    CustomOAuth2User social_userinfo = null;
+    social_userinfo = UserUtils.getCustomOAuth2User(request);
+    log.info("social_userinfo : {}", social_userinfo);
+
+    // 소셜로그인 값이 있는경우
+    if(social_userinfo != null) {
+
+      model.addAttribute("issuer", social_userinfo.getIssuer());
+      model.addAttribute("name", social_userinfo.getName());
+      model.addAttribute("id", social_userinfo.getId());
+      log.info("model : {}", model);
+      return "main";
+    }
+
+    //쿠키 값 확인
+    Cookie[] cookies = request.getCookies();
+    //
     if (cookies != null) {
       for (Cookie cookie : cookies) {
         if ("access_token".equals(cookie.getName())) {
@@ -91,25 +102,12 @@ public class OAuthClientController {
     return "signIn";
   }
 
-
-  @GetMapping("/APIExamNaverLogin")
-  public String login() {
-    String clientId = "AdW3oSJzkVBOScg8OywV";
-    String redirectUri = "http://leejihyun.co.kr:9000/callback";
-
-    String naverLoginUrl = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" + clientId + "&scope=email&state=71_-T7-moDerzcvLLDUOk2v7zczOLKDJ7OrB1cRlgYY%3D&redirect_uri=" + redirectUri;
-
-    return "redirect:" + naverLoginUrl;  // 네이버 로그인 페이지로 리디렉션
-  }
-
   @ResponseBody
   @GetMapping("/callback")
   public String callback() {
     System.out.println("callback test");
     return "Naver";
   }
-
-
 
   @GetMapping("/signIn")
   public String signIn() {
@@ -131,7 +129,7 @@ public class OAuthClientController {
       System.out.println("oauthReqDTO = " + oauthReqDTO);
 
       OAuthClient oAuthClient = OAuthClient.builder()
-              .username("홍길동")
+              .name("홍길동")
               .email(oauthReqDTO.getId())
               .issuer("LOCAL")
               .pwd(oauthReqDTO.getPwd())
@@ -159,7 +157,10 @@ public class OAuthClientController {
       Map<String, String> resultMap = getToken(oauthReqDTO);
       String access_token = resultMap.get("access_token");
 
+      System.out.println("access_token = " + access_token);
+
       Cookie cookie = new Cookie("access_token", access_token);
+      cookie.setPath("/");
       cookie.setHttpOnly(true); // JavaScript에서 접근 불가
       cookie.setSecure(true); // HTTPS에서만 전송
       cookie.setPath("/");
@@ -179,9 +180,10 @@ public class OAuthClientController {
     formData.add("client_id", oauthReqDTO.getId());
     formData.add("client_secret", oauthReqDTO.getPwd());
     //formData.add("scope", "openid profile");  // ✅ 스코프 추가
+    System.out.println("getToken start ");
 
     return RestClient.create().post()
-            .uri("http://localhost:9000/oauth2/token")
+            .uri("http://leejihyun.co.kr:9000/oauth2/token")
             .header("Content-Type", "application/x-www-form-urlencoded")
             .body(formData)
             .retrieve()
