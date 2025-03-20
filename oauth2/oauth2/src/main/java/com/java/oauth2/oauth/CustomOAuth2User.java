@@ -18,6 +18,7 @@ public class CustomOAuth2User implements OAuth2User {
 
   private String issuer;
   private String name;
+  private String email;
   private int id;
 
   @Override
@@ -41,6 +42,10 @@ public class CustomOAuth2User implements OAuth2User {
 
   public int getId() {
     return this.id;
+  }
+  
+  public String getEmail() {
+	  return this.email;
   }
 
 }

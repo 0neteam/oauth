@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
@@ -26,6 +27,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
@@ -68,33 +70,54 @@ public class AuthorizationConfig {
     @Value("${oauth2.redirection-end-point}")
     private String redirection;
 
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain clientFilterChain(HttpSecurity http, AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
+        http.with(authorizationServerConfigurer, (authorizationServer) -> authorizationServer.oidc(Customizer.withDefaults()));
+        http.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher());
+
+        http.csrf(csrf -> csrf
+                .ignoringRequestMatchers("/**")
+        );
+
+        http
+                .securityMatcher("/signIn", "/signUp", "/oauth2/**") // 이 패턴만 이 체인에서 처리
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/signIn", "/signUp", "/oauth2/**").permitAll() // 로그인 및 인증 관련 경로는 permitAll
+
+                                .anyRequest().authenticated() // 나머지 URL 접근 막기
+                )
+                .oauth2Login(oauth2 -> {
+                    oauth2.authorizationEndpoint(endpoint -> endpoint.baseUri(authorization));
+                    oauth2.redirectionEndpoint(endpoint -> endpoint.baseUri(redirection));
+                    oauth2.userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService));
+                    oauth2.loginPage("/*").permitAll(); // 로그인 페이지는 permitAll
+                    oauth2.successHandler(oAuth2SuccessHandler);
+                });
+
+        return http.build(); // 설정을 마친 SecurityFilterChain 반환
+    }
+
     // SecurityFilterChain 설정 - HTTP 보안 필터 설정
     @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         // OAuth2 인증 서버 설정
 
         System.out.println("test filter");
 
-        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
-        http.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher());
-
-        //http.with(authorizationServerConfigurer, Customizer.withDefaults());
-       http.with(authorizationServerConfigurer, (authorizationServer) -> authorizationServer.oidc(Customizer.withDefaults()));
-
-        // CSRF 보호 설정: 기본 설정 사용
-        http.csrf(Customizer.withDefaults());
-
-        // 폼 로그인 기본 설정 사용
-        http.formLogin(Customizer.withDefaults());
-
         // HTTP 요청에 대한 권한 설정
         http.authorizeHttpRequests(r -> {
                     // 특정 URL에 대해 모두 접근 허용
-                    r.requestMatchers("/", "/oauth2/authorize/**", "/oauth2/login/**", "/oauth2/callback/**").permitAll();
+                    r.requestMatchers("/").permitAll();
                     r.requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**").permitAll();
-                    r.requestMatchers(HttpMethod.GET, "/signIn", "/signUp", "/oauth2/**").permitAll();  // GET 요청 허용
-                    r.requestMatchers(HttpMethod.POST, "/addClient", "/signUp", "/signIn", "/oauth2/**").permitAll();  // POST 요청 허용
-                    r.anyRequest().authenticated();  // 나머지 요청은 인증이 필요
+                    r.requestMatchers(HttpMethod.GET, "/signIn", "/signUp", "/userinfo").permitAll();  // GET 요청 허용
+                    r.requestMatchers(HttpMethod.POST, "/addClient", "/signUp", "/signIn").permitAll(); // POST 요청 허용
+                    r.anyRequest().authenticated();// 나머지 URL 접근 막기
                 })
                 // OAuth2 Resource Server 설정 (JWT 사용)
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -103,22 +126,9 @@ public class AuthorizationConfig {
                         )
                 );
 
-        // OAuth2 로그인 설정
-        http.oauth2Login(oauth2 -> {
-            // OAuth2 인증 요청을 보낼 Authorization Endpoint 설정
-            oauth2.authorizationEndpoint(endpoint -> endpoint.baseUri(authorization));
-            System.out.println("authorization = " + authorization);
-            // OAuth2 인증 후 리디렉션 받을 Redirection Endpoint 설정
-            oauth2.redirectionEndpoint(endpoint -> endpoint.baseUri(redirection));
-            System.out.println("redirection = " + redirection);
-            // OAuth2 로그인 후 사용자 정보를 처리할 서비스 설정
-            oauth2.userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService));
-            // 로그인 성공 후 처리를 위한 핸들러 설정
-            oauth2.successHandler(oAuth2SuccessHandler);
-        });
-
-        return http.build();  // 설정을 마친 SecurityFilterChain 반환
+        return http.build(); // 설정을 마친 SecurityFilterChain 반환
     }
+
 
     // CORS 설정 (교차 출처 리소스 공유)
     @Bean
@@ -218,9 +228,16 @@ public class AuthorizationConfig {
                 builder.claims((claims) -> {
                     claims.put("scope", client.getScopes());  // 클라이언트의 스코프 정보 추가
                 });
+                                
+                System.out.println("test ClientName : " + client.getClientName());
+                System.out.println("test ClientID : " + client.getId());
+                
+                // 사용자 정보 추출
+                
 
                 // 사용자 정의 값 추가
-                builder.claim("username", "홍길동");  // 예시로 사용자 이름 추가
+                builder.claim("username", client.getClientName());  // 예시로 사용자 이름 추가
+                builder.claim("userNo", client.getId());
             }
         });
     }

@@ -1,24 +1,22 @@
 package com.java.oauth2.oauth;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 class OauthReqDTO {
 
-    private String id;
+    private String email;
+    private String name;
     private String pwd;
 
-    public void setId(String id) {
-        this.id = id;
-    }
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-    public String getId() {
-        return this.id;
-    }
-    public String getPwd() {
-        return this.pwd;
-    }
-    public String toString() {
-        return "[id:" + this.id + ", pwd:" + this.pwd + "]";
-    }
+    
 
 }
