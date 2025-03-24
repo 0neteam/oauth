@@ -1,5 +1,6 @@
-package com.java.oauth2.oauth;
+package com.java.oauth2.repository;
 
+import com.java.oauth2.entity.OAuthClient;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -35,7 +35,7 @@ body, html {
     margin-top: 10px;
 }
 
-.user-id {
+.user-email {
     font-size: 14px;
     color: #555;
     margin-top: 5px;
@@ -64,4 +64,76 @@ body, html {
 
 .button-group {
     margin-top: 20px;
+}
+
+
+
+main {
+    max-width: none; /* max-width를 해제하여 넓이를 고정하지 않도록 합니다. */
+}
+
+/* 부모 컨테이너: form-user와 content-wrapper를 한 줄로 배치 */
+.main-container {
+    display: flex;
+    width: 100%;
+}
+
+/* content-wrapper 클래스: form-user의 오른쪽에 위치하며, 남은 공간 차지 */
+.content-wrapper {
+    display: flex;
+    /*justify-content: space-between;*/
+    width: 100%;
+    margin-left: 10px;
+    padding: 10px;
+    margin-left: 10px;
+    position: relative; /* 추가: 자식 요소인 .cafe와 .blog의 절대 위치 기준 */
+}
+
+/* cafe와 blog에 외곽선 추가 */
+.cafe, .blog {
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: 15px;
+    position: relative; /* 추가: .cafe와 .blog를 기준으로 절대 위치의 자식 요소가 배치될 수 있게 설정 */
+    width: 48%;
+}
+
+
+/* +더보기 버튼을 오른쪽 아래로 배치 */
+.btn-link {
+    position: absolute;
+    bottom: 10px; /* 아래쪽 10px 위치 */
+    right: 10px;  /* 오른쪽 10px 위치 */
+    padding: 8px 16px;
+}
+
+h3, ul {
+    margin-left:10px;
+}
+
+
+/* 모바일에서 두 섹션을 세로로 나열 */
+@media (max-width: 768px) {
+
+    .main-container {
+        flex-direction: column; /* 세로로 나열 */
+    }
+
+    .content-wrapper {
+        flex-direction: column; /* 세로로 나열 */
+    }
+
+    .cafe, .blog {
+        display: flex; /* flexbox로 가로 배치 유지 */
+        flex-direction: row; /* 가로 방향 */
+        width: 100%; /* 각 섹션이 화면을 가득 채우도록 설정 */
+        margin-bottom: 15px; /* 각 섹션 사이에 간격 추가 */
+    }
+
+    h3, ul {
+        display: block; /* 화면 크기가 줄어들어도 세로로 유지 */
+        width: 100%; /* 화면 크기에 맞게 전체 너비 차지 */
+    }
 }

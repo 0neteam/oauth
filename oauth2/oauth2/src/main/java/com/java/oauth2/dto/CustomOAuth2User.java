@@ -1,4 +1,4 @@
-package com.java.oauth2.oauth;
+package com.java.oauth2.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

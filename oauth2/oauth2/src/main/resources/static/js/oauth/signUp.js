@@ -17,7 +17,7 @@ document.getElementById('signUpForm').addEventListener('submit', function(event)
             console.log(res);
             if (res.data === true) {
                 console.log(res.data)
-                document.location.href = "/"; // Redirect to home
+                document.location.href = "/signIn"; // Redirect to home
             }
         })
         .catch((err) => {

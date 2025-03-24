@@ -1,4 +1,4 @@
-package com.java.oauth2.oauth;
+package com.java.oauth2.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-class OauthReqDTO {
+public class OauthReqDTO {
 
     private String email;
     private String name;

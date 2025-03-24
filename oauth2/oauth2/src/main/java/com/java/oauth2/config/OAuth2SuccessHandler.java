@@ -1,5 +1,6 @@
-package com.java.oauth2.oauth;
+package com.java.oauth2.config;
 
+import com.java.oauth2.dto.CustomOAuth2User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

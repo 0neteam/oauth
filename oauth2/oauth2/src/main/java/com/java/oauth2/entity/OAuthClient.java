@@ -1,4 +1,4 @@
-package com.java.oauth2.oauth;
+package com.java.oauth2.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,7 +31,7 @@ public class OAuthClient {
   @Column(nullable = false, columnDefinition = "VARCHAR(50) DEFAULT 'LOCAL'")
   private String issuer;
 
-  @Column(length = 100, nullable = false)
+  @Column(length = 100)
   private String oauthId;
 
   private String pwd;
@@ -44,7 +43,7 @@ public class OAuthClient {
 
   @Column(nullable = false)
   @CreationTimestamp
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
   private LocalDateTime regDate;
 
 

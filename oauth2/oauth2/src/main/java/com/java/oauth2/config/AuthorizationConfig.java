@@ -1,8 +1,7 @@
 package com.java.oauth2.config;
 
-import com.java.oauth2.oauth.OAuth2SuccessHandler;
-import com.java.oauth2.oauth.OAuth2UserService;
-import com.java.oauth2.oauth.OAuthClientService;
+import com.java.oauth2.service.OAuth2UserServiceImp;
+import com.java.oauth2.service.OAuthClientServiceImp;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -14,43 +13,34 @@ import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import com.nimbusds.jwt.proc.JWTProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @EnableWebSecurity  // 웹 보안을 활성화하는 어노테이션
@@ -58,9 +48,9 @@ import java.util.Set;
 @RequiredArgsConstructor  // 생성자를 자동으로 생성하는 Lombok 어노테이션
 public class AuthorizationConfig {
 
-    private final OAuthClientService oAuthClientService;  // OAuth2 클라이언트 서비스
+    private final OAuthClientServiceImp oAuthClientService;  // OAuth2 클라이언트 서비스
 
-    private final OAuth2UserService oAuth2UserService;  // OAuth2 사용자 서비스
+    private final OAuth2UserServiceImp oAuth2UserService;  // OAuth2 사용자 서비스
     private final OAuth2SuccessHandler oAuth2SuccessHandler;  // OAuth2 로그인 성공 후 처리 핸들러
 
     // application.properties에서 OAuth2 인증 관련 URL을 가져옴
@@ -88,7 +78,6 @@ public class AuthorizationConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/signIn", "/signUp", "/oauth2/**").permitAll() // 로그인 및 인증 관련 경로는 permitAll
-
                                 .anyRequest().authenticated() // 나머지 URL 접근 막기
                 )
                 .oauth2Login(oauth2 -> {
@@ -109,6 +98,10 @@ public class AuthorizationConfig {
         // OAuth2 인증 서버 설정
 
         System.out.println("test filter");
+
+        http.csrf(csrf -> csrf
+                .ignoringRequestMatchers("/**")
+        );
 
         // HTTP 요청에 대한 권한 설정
         http.authorizeHttpRequests(r -> {

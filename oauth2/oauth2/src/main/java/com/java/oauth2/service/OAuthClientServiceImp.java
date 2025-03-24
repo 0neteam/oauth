@@ -1,5 +1,7 @@
-package com.java.oauth2.oauth;
+package com.java.oauth2.service;
 
+import com.java.oauth2.entity.OAuthClient;
+import com.java.oauth2.repository.OAuthClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -7,13 +9,9 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
-public class OAuthClientService {
+public class OAuthClientServiceImp implements OAuthClientService {
 
   private final OAuthClientRepository oAuthClientRepository;
   private String msg = "Client not Found Exception: ";
@@ -32,7 +30,7 @@ public class OAuthClientService {
     return loadClientByResult(oAuthClient);
   }
 
-  private RegisteredClient loadClientByResult(OAuthClient oAuthClient) {
+  public RegisteredClient loadClientByResult(OAuthClient oAuthClient) {
 
     return RegisteredClient
         .withId(String.valueOf(oAuthClient.getNo()))

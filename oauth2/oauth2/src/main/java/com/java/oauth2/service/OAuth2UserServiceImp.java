@@ -1,7 +1,9 @@
-package com.java.oauth2.oauth;
+package com.java.oauth2.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.java.oauth2.oauth.CustomOAuth2User;
+import com.java.oauth2.dto.CustomOAuth2User;
+import com.java.oauth2.entity.OAuthClient;
+import com.java.oauth2.repository.OAuthClientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -15,7 +17,7 @@ import java.util.Map;
 @Slf4j  // 로깅을 위한 어노테이션
 @Service  // 스프링 서비스 컴포넌트로 등록
 @RequiredArgsConstructor  // final 필드에 대한 생성자를 자동 생성하는 Lombok 어노테이션
-public class OAuth2UserService extends DefaultOAuth2UserService {
+public class OAuth2UserServiceImp extends DefaultOAuth2UserService {
 
   private final OAuthClientRepository oauthClientRepository;  // OAuth2 클라이언트 정보를 저장하는 리포지토리
 
