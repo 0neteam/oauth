@@ -15,14 +15,14 @@
 <!--    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
 <!--    &lt;!&ndash; Font Awesome &ndash;&gt;-->
 <!--    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">-->
-
     <div class="container-fluid">
         <div class="main-container">
             <!-- 이메일 값이 있을 때만 보여줌 -->
             <div class="form-user" th:if="${email != null and email != ''}">
                 <!-- 프로필 사진 -->
-                <img id="profile-img" src="https://static.nid.naver.com/images/web/user/default.png?type=s160" alt="Profile Picture" class="profile-img" onclick="document.getElementById('file-input').click();">
-<!--                <img id="profile-img" src="http://d.0neteam.co.kr:9000/file/uri/9" alt="Profile Picture" class="profile-img" onclick="document.getElementById('file-input').click();">-->
+                <img th:if="${PhotoNo != null and PhotoNo != ''}" th:src="|${PhotoNo}|" alt="Profile Picture" class="profile-img" onclick="document.getElementById('file-input').click();">
+                <!-- profilePhto 값이 null이거나 빈 문자열일 경우 -->
+                <img th:if="${PhotoNo == null or PhotoNo == ''}" src="https://static.nid.naver.com/images/web/user/default.png?type=s160" alt="Profile Picture" class="profile-img" onclick="document.getElementById('file-input').click();">
 
                 <!-- 파일 업로드 input -->
                 <input type="file" id="file-input" class="file-input" accept="image/*" onchange="updateProfileImage(event)" style="display: none;">
@@ -38,11 +38,12 @@
                 <!-- 로그아웃 버튼 -->
                 <button class="btn btn-lg btn-danger btn-block btn-center" style="padding: 8px 16px;" onclick="logout()">로그아웃</button>
 
-                <!-- 카페 이동 버튼 -->
-                <button class="btn btn-lg btn-primary btn-block btn-center" style="padding: 8px 16px;" >카페 이동</button>
-
                 <!-- 블로그 이동 버튼 -->
-                <button class="btn btn-lg btn-primary btn-block btn-center" style="padding: 8px 16px;" >블로그 이동</button>
+                <button class="btn btn-lg btn-primary btn-block btn-center" style="padding: 8px 16px;" >내 블로그</button>
+
+                <!-- 카페 이동 버튼 -->
+                <button class="btn btn-lg btn-primary btn-block btn-center" style="padding: 8px 16px;" onclick="location.href='http://d.0neteam.co.kr:8001/cafe'">내 카페</button>
+
             </div>
 
             <div class="content-wrapper">

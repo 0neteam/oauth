@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-public interface OAuth2UserService {
+public interface OAuthService {
 
     public String getLoginInfo(HttpServletRequest request, Model model);
 
@@ -23,4 +23,6 @@ public interface OAuth2UserService {
     public Map<String, String> getToken(OauthReqDTO oauthReqDTO);
 
     public String logout(Model model, HttpServletResponse response);
+
+    public String MyPageEdit(HttpServletRequest request, Model model);
 }

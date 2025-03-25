@@ -73,6 +73,8 @@ public class AuthorizationConfig {
                 .ignoringRequestMatchers("/**")
         );
 
+        http.cors(Customizer.withDefaults());
+
         http
                 .securityMatcher("/signIn", "/signUp", "/oauth2/**") // 이 패턴만 이 체인에서 처리
                 .authorizeHttpRequests(authorizeRequests ->
@@ -103,13 +105,15 @@ public class AuthorizationConfig {
                 .ignoringRequestMatchers("/**")
         );
 
+        http.cors(Customizer.withDefaults());
+
         // HTTP 요청에 대한 권한 설정
         http.authorizeHttpRequests(r -> {
                     // 특정 URL에 대해 모두 접근 허용
                     r.requestMatchers("/").permitAll();
                     r.requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**").permitAll();
-                    r.requestMatchers(HttpMethod.GET, "/signIn", "/signUp", "/userinfo").permitAll();  // GET 요청 허용
-                    r.requestMatchers(HttpMethod.POST, "/addClient", "/signUp", "/signIn").permitAll(); // POST 요청 허용
+                    r.requestMatchers(HttpMethod.GET, "/signIn","/signUp","/userinfo","/MyPageInfo","/MyPageEdit","/file/**").permitAll();  // GET 요청 허용
+                    r.requestMatchers(HttpMethod.POST, "/addClient", "/signUp", "/signIn", "/UserInfoUpdate","/file/**").permitAll(); // POST 요청 허용
                     r.anyRequest().authenticated();// 나머지 URL 접근 막기
                 })
                 // OAuth2 Resource Server 설정 (JWT 사용)
@@ -128,7 +132,7 @@ public class AuthorizationConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // 허용할 출처 설정
-        List<String> originUris = List.of("http://127.0.0.1:8000", "http://localhost:8000");
+        List<String> originUris = List.of("http://127.0.0.1:8000", "http://localhost:8000","http://192.168.0.7:8001","http://d.0neteam.co.kr:8001","http://d.0neteam.co.kr:8002");
         originUris.forEach(config::addAllowedOrigin);
         config.addAllowedOriginPattern("*");  // 모든 출처 허용
         config.addAllowedHeader("*");  // 모든 헤더 허용
@@ -216,7 +220,7 @@ public class AuthorizationConfig {
                 JwtClaimsSet.Builder builder = context.getClaims();
 
                 builder.issuer("Oauth2_Server");  // 발급자 설정
-                builder.expiresAt(Instant.now().plus(1, ChronoUnit.MINUTES));  // 만료 시간 설정
+                builder.expiresAt(Instant.now().plus(1, ChronoUnit.DAYS));  // 만료 시간 설정
 
                 builder.claims((claims) -> {
                     claims.put("scope", client.getScopes());  // 클라이언트의 스코프 정보 추가

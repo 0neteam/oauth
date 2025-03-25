@@ -1,7 +1,10 @@
 package com.java.oauth2.service;
 
 import com.java.oauth2.common.UserUtils;
+import com.java.oauth2.common.Utils;
 import com.java.oauth2.dto.CustomOAuth2User;
+import com.java.oauth2.dto.FileDTO;
+import com.java.oauth2.dto.FileResDTO;
 import com.java.oauth2.dto.OauthReqDTO;
 import com.java.oauth2.entity.OAuthClient;
 import com.java.oauth2.repository.OAuthClientRepository;
@@ -13,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,8 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +39,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OAuthServiceImp implements OAuth2UserService {
+public class OAuthServiceImp implements OAuthService {
 
   private final OAuthClientRepository oAuthClientRepository;
   private final BCryptPasswordEncoder passwordEncoder;
@@ -40,6 +47,13 @@ public class OAuthServiceImp implements OAuth2UserService {
   private final JwtDecoder jwtDecoder;
   private final JWKSet jwkSet;
   private final PostServiceImp postService;
+
+  private final FileService fileService;
+  private final Utils utils;
+
+  // application.properties에서 호스팅 도메인 정보를 가져옴
+  @Value("${hosting.uri}")
+  private String hostingUri;
 
   public String getLoginInfo(HttpServletRequest request, Model model) {
 
@@ -59,47 +73,27 @@ public class OAuthServiceImp implements OAuth2UserService {
       //return "main";
     }
 
-    //쿠키 값 확인
-    Cookie[] cookies = request.getCookies();
+    String userNo = utils.getUserNo(request);
 
-      if (cookies != null) {
-        for (Cookie cookie : cookies) {
-          if ("access_token".equals(cookie.getName())) {
+    // 토큰 인증 실패시 로그아웃 처리
+    if(userNo.equals("invaildToken")) {
+      System.out.println("invaildToken");
+      return "redirect:" + hostingUri + "/oauth2/logout";
+    }
 
-            List<JWK> jwks = jwkSet.getKeys();
+    System.out.println("userNo123 : " + userNo);
 
-            String token = cookie.getValue();
-
-            System.out.println("token = " + token);
-
-            try {
-
-              // JwtDecoder를 사용하여 토큰 디코딩
-              Jwt jwt = jwtDecoder.decode(token);
-
-              // 🔹 디버깅 로그 출력 (토큰 클레임 및 만료 시간)
-              System.out.println("Decoded JWT claims: " + jwt.getClaims());
-
-              // "sub" 클레임 추출
-              String email = (String) jwt.getClaims().get("sub");
-              String name = (String) jwt.getClaims().get("username");
-
-              System.out.println("controller name : " + name);
-
-              model.addAttribute("email", email);
-              model.addAttribute("name", name);
-
-              System.out.println("local login model =" + model);
-
-            } catch (JwtException e) {
-              // 토큰 처리 중 오류가 발생한 경우 로그아웃처리
-              return "redirect:/oauth2/logout";
-            }
-
-          }
-        }
+    if(userNo != "") {
+      OAuthClient oAuthClient = oAuthClientRepository.findById(Integer.parseInt(userNo)).orElseThrow();
+      System.out.println("******************** " + oAuthClient);
+      model.addAttribute("email", oAuthClient.getEmail());
+      model.addAttribute("name", oAuthClient.getName());
+      if (oAuthClient.getFileNo() > 0) {
+        model.addAttribute("PhotoNo", hostingUri + "/file/uri/" + oAuthClient.getFileNo());
+//        System.out.println("PhotoNo = " + oAuthClient.getFileNo());
       }
 
+    }
 
       model.addAttribute("cafeList", postService.getPostsByUseYN("Y"));
       model.addAttribute("blogList", postService.getPostsByUseYN("Y"));
@@ -230,7 +224,7 @@ public class OAuthServiceImp implements OAuth2UserService {
     System.out.println("getToken start ");
 
     return RestClient.create().post()
-            .uri("http://l.0neteam.co.kr:9000/oauth2/token")
+            .uri(hostingUri + "/oauth2/token")
             .header("Content-Type", "application/x-www-form-urlencoded")
             .body(formData)
             .retrieve()
@@ -254,6 +248,95 @@ public class OAuthServiceImp implements OAuth2UserService {
     model.addAttribute("blogList", postService.getPostsByUseYN("Y"));
 
     return "main";
+  }
+
+  public boolean UserInfoUpdate (@RequestParam(value = "file", required = false) MultipartFile file,
+                                 @RequestParam("email") String email,
+                                 @RequestParam("name") String name,
+                                 @RequestParam("pwd") String pwd,
+                                 HttpServletRequest request) {
+
+    // 로그인 (Token에 담겨 있는 사용자 정보로 User 테이블 PK 값 가져오기)
+
+    try {
+      String userNo = utils.getUserNo(request);
+      // 토큰 인증 실패시 로그아웃 처리
+      if(userNo.equals("invaildToken")) { // userNo 값이 비어있으면 false 처리
+        return false;
+      }
+
+      OAuthClient oAuthClient = oAuthClientRepository.findById(Integer.parseInt(userNo)).orElseThrow();
+
+      if(file != null) {
+        FileResDTO fileResDTO = fileService.upload(file, Integer.parseInt(userNo));
+        FileDTO fileDTO = fileResDTO.getFile();
+        oAuthClient.setFileNo(fileDTO.getNo());
+        System.out.println("fileDTO.getNo() : " + fileDTO.getNo());
+      }
+
+      oAuthClient.setName(name);
+      oAuthClient.setPwd(passwordEncoder.encode(pwd)); // 암호화 처리
+
+      oAuthClientRepository.save(oAuthClient);
+    }
+    catch ( Exception e ){
+      System.out.println("Exception : " + e);
+      return false;
+    }
+
+
+    return true;
+  }
+
+
+  public String MyPageInfo(HttpServletRequest request, Model model) {
+
+    System.out.println("Start MyPageInfo");
+
+    String userNo = utils.getUserNo(request);
+    // 토큰 인증 실패시 로그아웃 처리
+    if(userNo.equals("invaildToken")) {
+      System.out.println("invaildToken");
+      return "redirect:" + hostingUri + "/oauth2/logout";
+    }
+
+    OAuthClient oAuthClient = oAuthClientRepository.findById(Integer.parseInt(userNo)).orElseThrow();
+
+    if (oAuthClient.getFileNo() != 0) {
+      model.addAttribute("PhotoNo", hostingUri + "/file/uri/" + oAuthClient.getFileNo());
+      model.addAttribute("email", oAuthClient.getEmail());
+      model.addAttribute("oAuthClient", oAuthClient);
+
+      System.out.println("PhotoNo = " + oAuthClient.getFileNo());
+      System.out.println("email123 = " + oAuthClient.getEmail());
+    }
+
+    return "MyPageInfo";
+  }
+
+  public String MyPageEdit(HttpServletRequest request, Model model) {
+
+    System.out.println("Start MyPageEdit");
+
+    String userNo = utils.getUserNo(request);
+    // 토큰 인증 실패시 로그아웃 처리
+    if(userNo.equals("invaildToken")) {
+      System.out.println("invaildToken");
+      return "redirect:" + hostingUri + "/oauth2/logout";
+    }
+
+    OAuthClient oAuthClient = oAuthClientRepository.findById(Integer.parseInt(userNo)).orElseThrow();
+
+    if (oAuthClient.getFileNo() != 0) {
+      model.addAttribute("PhotoNo", hostingUri + "/file/uri/" + oAuthClient.getFileNo());
+      model.addAttribute("email", oAuthClient.getEmail());
+      model.addAttribute("oAuthClient", oAuthClient);
+
+      System.out.println("PhotoNo = " + oAuthClient.getFileNo());
+      System.out.println("email123 = " + oAuthClient.getEmail());
+    }
+
+    return "MyPageEdit";
   }
 
 }
