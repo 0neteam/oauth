@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class Utils {
@@ -26,9 +28,11 @@ public class Utils {
 
         //쿠키 값 확인
         Cookie[] cookies = request.getCookies();
-        //
+
+        log.info("COOKIES : {}", cookies);
         if (cookies != null) {
             for (Cookie cookie : cookies) {
+                log.info("COOKIE : {}", cookie);
                 if ("access_token".equals(cookie.getName())) {
                     List<JWK> jwks = jwkSet.getKeys();
                     String token = cookie.getValue();

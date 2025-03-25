@@ -132,6 +132,7 @@ public class AuthorizationConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // 허용할 출처 설정
+
         List<String> originUris = List.of("http://127.0.0.1:8000", "http://localhost:8000","http://192.168.0.7:8001","http://d.0neteam.co.kr:8001","http://d.0neteam.co.kr:8002","http://l.0neteam.co.kr:8001","http://l.0neteam.co.kr:8002");
         originUris.forEach(config::addAllowedOrigin);
         config.addAllowedOriginPattern("*");  // 모든 출처 허용

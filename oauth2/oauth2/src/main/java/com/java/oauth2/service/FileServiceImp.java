@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -117,8 +119,11 @@ public class FileServiceImp implements FileService {
 			String mediaType = fileInfo.getMediaType();
 			File file = new File(attachPath.concat("/").concat(name).concat(ext));
 
+			// 파일명이 한글일 경우 UTF-8로 인코딩
+			String encodedFileName = URLEncoder.encode(orgin, StandardCharsets.UTF_8).replace("+", "%20");
+
 			HttpHeaders headers = new HttpHeaders();
-			headers.add(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + orgin + "\"");
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFileName);
 			return ResponseEntity.ok()
 					.headers(headers)
 					.contentLength(file.length())

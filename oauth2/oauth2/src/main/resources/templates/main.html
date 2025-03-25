@@ -15,13 +15,14 @@
 <!--    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
 <!--    &lt;!&ndash; Font Awesome &ndash;&gt;-->
 <!--    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">-->
-
     <div class="container-fluid">
         <div class="main-container">
             <!-- 이메일 값이 있을 때만 보여줌 -->
             <div class="form-user" th:if="${email != null and email != ''}">
                 <!-- 프로필 사진 -->
-                <img th:if="${PhotoNo != null and PhotoNo != ''}" th:src="@{${PhotoNo}}" alt="Profile Picture" class="profile-img" onclick="document.getElementById('file-input').click();">
+
+                <img th:if="${PhotoNo != null and PhotoNo != ''}" th:src="|${PhotoNo}|" alt="Profile Picture" class="profile-img" onclick="document.getElementById('file-input').click();">
+
                 <!-- profilePhto 값이 null이거나 빈 문자열일 경우 -->
                 <img th:if="${PhotoNo == null or PhotoNo == ''}" src="https://static.nid.naver.com/images/web/user/default.png?type=s160" alt="Profile Picture" class="profile-img" onclick="document.getElementById('file-input').click();">
 
