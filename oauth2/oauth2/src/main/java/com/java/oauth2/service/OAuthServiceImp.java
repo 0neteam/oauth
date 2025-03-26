@@ -8,6 +8,7 @@ import com.java.oauth2.dto.FileResDTO;
 import com.java.oauth2.dto.OauthReqDTO;
 import com.java.oauth2.entity.OAuthClient;
 import com.java.oauth2.repository.OAuthClientRepository;
+import com.java.oauth2.repository.PostRepository;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import jakarta.servlet.http.Cookie;
@@ -42,6 +43,7 @@ import java.util.Map;
 public class OAuthServiceImp implements OAuthService {
 
   private final OAuthClientRepository oAuthClientRepository;
+  private final PostRepository postRepository;
   private final BCryptPasswordEncoder passwordEncoder;
 
   private final JwtDecoder jwtDecoder;
@@ -95,11 +97,10 @@ public class OAuthServiceImp implements OAuthService {
 
     }
 
+      System.out.println("request = " + request + ", model = " + model);
 
-    System.out.println("request = " + request + ", model = " + model);
-
-      model.addAttribute("cafeList", postService.getPostsByUseYN("Y"));
-      model.addAttribute("blogList", postService.getPostsByUseYN("Y"));
+      model.addAttribute("cafeList", postRepository.findByMenuNo_BoardNo_Type(1));
+      model.addAttribute("blogList", postRepository.findByMenuNo_BoardNo_Type(2));
 
     return "main";
   }
@@ -205,8 +206,8 @@ public class OAuthServiceImp implements OAuthService {
       cookie.setMaxAge(session.getMaxInactiveInterval());
       response.addCookie(cookie);
 
-      model.addAttribute("cafeList", postService.getPostsByUseYN("Y"));
-      model.addAttribute("blogList", postService.getPostsByUseYN("Y"));
+      model.addAttribute("cafeList", postRepository.findByMenuNo_BoardNo_Type(1));
+      model.addAttribute("blogList", postRepository.findByMenuNo_BoardNo_Type(2));
 
     } catch (Exception e) {
       status = false;
@@ -224,7 +225,7 @@ public class OAuthServiceImp implements OAuthService {
     formData.add("client_id", oauthReqDTO.getEmail());
     formData.add("client_secret", oauthReqDTO.getPwd());
     //formData.add("scope", "openid profile");  // ✅ 스코프 추가
-    System.out.println("getToken start ");
+    System.out.println("getToken start");
 
     return RestClient.create().post()
             .uri(hostingUri + "/oauth2/token")
@@ -247,8 +248,8 @@ public class OAuthServiceImp implements OAuthService {
             .build();
     response.addHeader(HttpHeaders.SET_COOKIE, targetCookie.toString());
 
-    model.addAttribute("cafeList", postService.getPostsByUseYN("Y"));
-    model.addAttribute("blogList", postService.getPostsByUseYN("Y"));
+    model.addAttribute("cafeList", postRepository.findByMenuNo_BoardNo_Type(1));
+    model.addAttribute("blogList", postRepository.findByMenuNo_BoardNo_Type(2));
 
     return "main";
   }

@@ -7,8 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "post")
@@ -16,15 +18,17 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Post {
+public class PostEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int no; // 글번호
 
-    private int menuNo; // 메뉴번호 (다른 테이블과 연관)
+    @ManyToOne
+    @JoinColumn(name="menuNo")
+    private MenuEntity menuNo;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 100)
     private String title; // 글제목
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -35,7 +39,7 @@ public class Post {
 
     @Column(nullable = false)
     @CreationTimestamp
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime regDate;
 
     @Column(nullable = false)
@@ -44,8 +48,8 @@ public class Post {
     @Column(nullable = true)  // NULL을 허용할 수 있도록 설정
     private Integer modUserNo; // 수정자 (다른 테이블과 연관)
 
-    @CreationTimestamp
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
+    @UpdateTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime modDate; // 수정일자
 
     @Column(nullable = false, length = 1)

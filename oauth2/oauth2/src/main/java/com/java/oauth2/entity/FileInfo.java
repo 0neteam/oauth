@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "fileinfo")
@@ -38,12 +40,14 @@ public class FileInfo {
 	@CreationTimestamp
     @Column(nullable = false, updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private LocalDate regDate;
+	private LocalDateTime regDate;
 	
 	@Column(nullable = false)
 	private Integer regUserNo;
-	
-	private LocalDate modDate;
+
+	@UpdateTimestamp
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime modDate;
 	private Integer modUserNo;
 	
 	@Column(nullable = false, length = 255)

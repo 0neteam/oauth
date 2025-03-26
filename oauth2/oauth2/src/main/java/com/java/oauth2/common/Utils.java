@@ -29,6 +29,7 @@ public class Utils {
         //쿠키 값 확인
         Cookie[] cookies = request.getCookies();
 
+        log.info("test info");
         log.info("COOKIES : {}", cookies);
         if (cookies != null) {
             for (Cookie cookie : cookies) {

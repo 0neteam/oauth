@@ -43,7 +43,7 @@ public class OAuthClient {
 
   @Column(nullable = false)
   @CreationTimestamp
-  @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime regDate;
 
 
