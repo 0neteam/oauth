@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "user")
@@ -43,10 +44,8 @@ public class OAuthClient {
 
   @Column(nullable = false)
   @CreationTimestamp
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+  @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
   private LocalDateTime regDate;
 
+  }
 
-
-
-}

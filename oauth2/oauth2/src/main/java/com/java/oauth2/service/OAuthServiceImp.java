@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -99,9 +100,12 @@ public class OAuthServiceImp implements OAuthService {
         model.addAttribute("PhotoNo", hostingUri + "/file/uri/" + oAuthClient.getFileNo());
       }
 
+
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+      System.out.println("regDate = " +  oAuthClient.getRegDate().format(formatter));
     }
 
-      System.out.println("request = " + request + ", model = " + model);
+
 
       model.addAttribute("cafeList", postRepository.findTop10ByMenuNoBoardNoType(1, Sort.by(Sort.Order.desc("no"))));
       model.addAttribute("blogList", postRepository.findTop10ByMenuNoBoardNoType(2, Sort.by(Sort.Order.desc("no"))));
