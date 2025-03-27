@@ -37,6 +37,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -52,6 +55,7 @@ public class OAuthServiceImp implements OAuthService {
 
   private final FileService fileService;
   private final Utils utils;
+
 
   // application.properties에서 호스팅 도메인 정보를 가져옴
   @Value("${hosting.uri}")
@@ -99,8 +103,8 @@ public class OAuthServiceImp implements OAuthService {
 
       System.out.println("request = " + request + ", model = " + model);
 
-      model.addAttribute("cafeList", postRepository.findByMenuNo_BoardNo_Type(1));
-      model.addAttribute("blogList", postRepository.findByMenuNo_BoardNo_Type(2));
+      model.addAttribute("cafeList", postRepository.findTop10ByMenuNoBoardNoType(1, Sort.by(Sort.Order.desc("no"))));
+      model.addAttribute("blogList", postRepository.findTop10ByMenuNoBoardNoType(2, Sort.by(Sort.Order.desc("no"))));
 
     return "main";
   }
@@ -206,8 +210,8 @@ public class OAuthServiceImp implements OAuthService {
       cookie.setMaxAge(session.getMaxInactiveInterval());
       response.addCookie(cookie);
 
-      model.addAttribute("cafeList", postRepository.findByMenuNo_BoardNo_Type(1));
-      model.addAttribute("blogList", postRepository.findByMenuNo_BoardNo_Type(2));
+      model.addAttribute("cafeList", postRepository.findTop10ByMenuNoBoardNoType(1, Sort.by(Sort.Order.desc("no"))));
+      model.addAttribute("blogList", postRepository.findTop10ByMenuNoBoardNoType(2, Sort.by(Sort.Order.desc("no"))));
 
     } catch (Exception e) {
       status = false;
@@ -248,8 +252,8 @@ public class OAuthServiceImp implements OAuthService {
             .build();
     response.addHeader(HttpHeaders.SET_COOKIE, targetCookie.toString());
 
-    model.addAttribute("cafeList", postRepository.findByMenuNo_BoardNo_Type(1));
-    model.addAttribute("blogList", postRepository.findByMenuNo_BoardNo_Type(2));
+    model.addAttribute("cafeList", postRepository.findTop10ByMenuNoBoardNoType(1, Sort.by(Sort.Order.desc("no"))));
+    model.addAttribute("blogList", postRepository.findTop10ByMenuNoBoardNoType(2, Sort.by(Sort.Order.desc("no"))));
 
     return "main";
   }
