@@ -16,10 +16,13 @@
         <div class="menubar" style="width: 100%; display: flex; justify-content: flex-end;" >
             <div th:if="${email == null}" style="width: 100%; display: flex; justify-content: flex-end;">
                 <div style="margin-right:30px;"><a href="/signIn" >로그인</a></div>
+                <div style="margin-right:30px;"><a href="/signUp" >회원가입</a></div>
             </div>
 
             <div th:if="${email != null and email != ''}" style="width: 100%; display: flex; justify-content: flex-end;">
-                <div style="margin-right:10px;"><a href="/MyPageInfo" >내정보</a></div>
+                <div style="margin-right:30px;"><a href="http://d.0neteam.co.kr:8002" >블로그홈</a></div>
+                <div style="margin-right:30px;"><a href="http://d.0neteam.co.kr:8001" >카페홈</a></div>
+                <div style="margin-right:30px;"><a href="/MyPageInfo" >내정보</a></div>
                 <div style="margin-right:30px;"><a href="/oauth2/logout">로그아웃</a></div>
 
             </div>
