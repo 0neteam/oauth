@@ -39,8 +39,11 @@ public class PostEntity {
 
     @Column(nullable = false)
     @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
     private LocalDateTime regDate;
+
+    @Transient // DB 컬럼 생성 X, 메모리에서만 사용
+    private String parsRegDate;
 
     @Column(nullable = false)
     private int viewCount; // 조회수
@@ -49,7 +52,7 @@ public class PostEntity {
     private Integer modUserNo; // 수정자 (다른 테이블과 연관)
 
     @UpdateTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
     private LocalDateTime modDate; // 수정일자
 
     @Column(nullable = false, length = 1)

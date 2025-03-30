@@ -43,7 +43,7 @@ document.getElementById('MyPageEditForm').addEventListener('submit', function(ev
       .then((res) => {
         console.log(res);
         if (res.data === true) {
-          document.location.href = "/"; // Redirect to home
+          document.location.href = "/MyPageInfo"; // Redirect to home
         }
       })
       .catch((err) => {

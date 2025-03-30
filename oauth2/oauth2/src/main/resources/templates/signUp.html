@@ -20,7 +20,7 @@
         <div class="container text-center">
             <form class="form-signin" method="post" id="signUpForm" action="/signUp">
                 <h2 class="form-signin-heading">Sign up</h2>
-                <small class="text-muted">Connect Cafe & Blog with your favorite social network</small>
+                <small class="text-muted" style="font-size:11px;">Connect Cafe & Blog with your favorite social network</small>
                 <br><br>
 
                 <p>
@@ -43,7 +43,7 @@
 
                 </p>
 
-                <small class="text-muted">Or sign in with cafe & blog</small>
+                <small class="text-muted" style="font-size:11px;">Or sign in with cafe & blog</small>
                 <br><br>
 
                 <input class="form-control login-input" type="email" name="email" id="email" placeholder="Email Address" required>
@@ -51,9 +51,12 @@
                 <input class="form-control login-input-pass" name="pwd" id="pwd" placeholder="Password" type="password" required>
 
 
-                <button class="btn btn-lg btn-primary btn-block btn-center" type="submit">Sign up</button>
+                <button class="btn btn-lg btn-primary btn-block btn-center" style="margin-bottom:10px;" type="submit">Sign up</button>
                 <br>
-                <small class="create-account text-muted">Do you have a cafe & blog or social network account? <a class="btn btn-sm btn-default" href="/signIn">Sign In</a></small>
+                <small class="create-account text-muted" style="font-size:11px; margin-bottom:10px;">Do you have a cafe & blog or social network account? </small>
+                <a href="/signIn">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" style="width:70px; height:30px; font-size:11px;" >Sign In</button>
+                </a>
             </form>
         </div>
     </div>

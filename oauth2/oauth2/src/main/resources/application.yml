@@ -1,6 +1,10 @@
 server:
   port: 9000
 
+  servlet:
+    session:
+      timeout: 86400s  # 86400초 = 1일 (24시간)
+
 spring:
   application:
     name: oauth_client

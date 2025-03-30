@@ -6,7 +6,10 @@ import com.java.oauth2.dto.CustomOAuth2User;
 import com.java.oauth2.dto.FileDTO;
 import com.java.oauth2.dto.FileResDTO;
 import com.java.oauth2.dto.OauthReqDTO;
+import com.java.oauth2.entity.BoardEntity;
 import com.java.oauth2.entity.OAuthClient;
+import com.java.oauth2.entity.PostEntity;
+import com.java.oauth2.repository.BoardRepository;
 import com.java.oauth2.repository.OAuthClientRepository;
 import com.java.oauth2.repository.PostRepository;
 import com.nimbusds.jose.jwk.JWK;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +51,7 @@ import org.springframework.data.domain.Sort.Order;
 public class OAuthServiceImp implements OAuthService {
 
   private final OAuthClientRepository oAuthClientRepository;
+  private final BoardRepository boardRepository;
   private final PostRepository postRepository;
   private final BCryptPasswordEncoder passwordEncoder;
 
@@ -92,23 +97,57 @@ public class OAuthServiceImp implements OAuthService {
 
 
     if(userNo != ""){
-      OAuthClient oAuthClient = oAuthClientRepository.findById(Integer.parseInt(userNo)).orElseThrow();
+      int UserNo = Integer.parseInt(userNo);
+      OAuthClient oAuthClient = oAuthClientRepository.findById(UserNo).orElseThrow();
+      BoardEntity cafe_boardEntity = boardRepository.findByRegUserNoAndType(UserNo, 1);
+      BoardEntity blog_boardEntity = boardRepository.findByRegUserNoAndType(UserNo, 2);
+
       System.out.println("******************** " + oAuthClient);
       model.addAttribute("email", oAuthClient.getEmail());
       model.addAttribute("name", oAuthClient.getName());
+
       if (oAuthClient.getFileNo() > 0) {
         model.addAttribute("PhotoNo", hostingUri + "/file/uri/" + oAuthClient.getFileNo());
       }
 
+      if (cafe_boardEntity != null) {
+        model.addAttribute("Cafe_Domain", cafe_boardEntity.getDomain());
+        System.out.println("cafe_boardEntity = " + cafe_boardEntity + ", userNo = " + userNo);
+      }
 
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-      System.out.println("regDate = " +  oAuthClient.getRegDate().format(formatter));
+      if (blog_boardEntity != null) {
+        model.addAttribute("Blog_Domain", blog_boardEntity.getDomain());
+        System.out.println("blog_boardEntity = " + blog_boardEntity + ", userNo = " + userNo);
+      }
+
     }
 
 
+    List<PostEntity> cafeList = postRepository.findTop10ByMenuNoBoardNoType(1, Sort.by(Sort.Order.desc("no")));
 
-      model.addAttribute("cafeList", postRepository.findTop10ByMenuNoBoardNoType(1, Sort.by(Sort.Order.desc("no"))));
-      model.addAttribute("blogList", postRepository.findTop10ByMenuNoBoardNoType(2, Sort.by(Sort.Order.desc("no"))));
+    List<PostEntity> blogList = postRepository.findTop10ByMenuNoBoardNoType(2, Sort.by(Sort.Order.desc("no")));
+
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+
+    // 각 Post 객체의 regDate가 문자열이라면 이를 LocalDateTime으로 변환
+    cafeList.forEach(post -> {
+      // 문자열을 LocalDateTime으로 파싱
+      String regDateStr = post.getRegDate().format(formatter);  // regDate가 String이라고 가정
+      System.out.println("regDateStr : " + regDateStr);
+      post.setParsRegDate(regDateStr);  // setRegDate가 LocalDateTime을 받아야 한다면
+    });
+
+    // 각 Post 객체의 regDate를 포맷
+    blogList.forEach(post -> {
+      // regDate를 포맷하여 setRegDate에 적용
+      String regDateStr = post.getRegDate().format(formatter);  // regDate가 String이라고 가정
+      System.out.println("regDateStr : " + regDateStr);
+      post.setParsRegDate(regDateStr);  // setRegDate가 LocalDateTime을 받아야 한다면
+    });
+
+      model.addAttribute("cafeList", cafeList);
+      model.addAttribute("blogList", blogList);
 
     return "main";
   }
@@ -318,6 +357,11 @@ public class OAuthServiceImp implements OAuthService {
       model.addAttribute("PhotoNo", hostingUri + "/file/uri/" + oAuthClient.getFileNo());
 
     }
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+    String regDateStr = oAuthClient.getRegDate().format((formatter));
+    oAuthClient.setParsRegDate(regDateStr);
+
     model.addAttribute("email", oAuthClient.getEmail());
     model.addAttribute("oAuthClient", oAuthClient);
 

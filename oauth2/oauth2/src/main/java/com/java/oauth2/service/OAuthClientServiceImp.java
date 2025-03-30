@@ -25,7 +25,7 @@ public class OAuthClientServiceImp implements OAuthClientService {
 
   public RegisteredClient findByClientId(String Id) {
     System.out.println("findByClientId = " + Id);
-    OAuthClient oAuthClient = oAuthClientRepository.findByEmail(Id)
+    OAuthClient oAuthClient = oAuthClientRepository.findByEmailAndUseYN(Id, 'Y')
             .orElseThrow(() -> new IllegalArgumentException(msg + Id));
     return loadClientByResult(oAuthClient);
   }

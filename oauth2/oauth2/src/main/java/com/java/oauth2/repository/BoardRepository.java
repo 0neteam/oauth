@@ -10,4 +10,5 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
     BoardEntity findByNo(int no);
 
+    BoardEntity findByRegUserNoAndType(Integer regUserNo, Integer type);
 }

@@ -47,5 +47,8 @@ public class OAuthClient {
   @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
   private LocalDateTime regDate;
 
+  @Transient // DB 컬럼 생성 X, 메모리에서만 사용
+  private String parsRegDate;
+
   }
 
